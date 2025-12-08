@@ -1,0 +1,8 @@
+[project]
+name = "aoc2022"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "advent-of-code-data>=2.1.0",
+    "icecream>=2.1.8",
+]
