@@ -115,6 +115,8 @@ just test 9 2       # Test part 2
 
 The test input is small and should run instantly. Compare output to expected result in the problem description.
 
+**Quick Tip**: If your test output matches the expected result, you can skip running with real input (`just run`) and submit directly (`just submit`). The test validates that your logic is correct, so if it passes, your solution should work with the real input.
+
 ### 5. Running with Real Input
 
 **Run with the actual puzzle input from the project root:**
@@ -153,12 +155,12 @@ The submit script will:
 2. **Fetch descriptions:** `just desc 9` (after part 1 accepted)
 3. **Edit solutions:** Update `d9/p1.py` and `d9/p2.py`
 4. **Test part 1:** `just test 9 1`
-5. **Run part 1:** `just run 9 1`
-6. **Submit part 1:** `just submit 1 9`
-7. **Fetch part 2 description:** `just desc 9`
-8. **Test part 2:** `just test 9 2`
-9. **Run part 2:** `just run 9 2`
-10. **Submit part 2:** `just submit 2 9`
+5. **Submit part 1:** `just submit 1 9` (if test passes, skip `just run 9 1`)
+6. **Fetch part 2 description:** `just desc 9`
+7. **Test part 2:** `just test 9 2`
+8. **Submit part 2:** `just submit 2 9` (if test passes, skip `just run 9 2`)
+
+**Optimized Path**: Steps 5 and 8 (`just run`) are optional. If your test output matches the expected result, you can submit directly—no need to run with real input first.
 
 ## Important Notes
 
