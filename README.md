@@ -61,10 +61,39 @@ ic(solve(open('r.in').read()))
 
 ### Run a solution
 
+Using justfile (recommended):
 ```bash
-uv run d1/p1.py
-uv run d2/p2.py
+just t1     # Test part 1 with example input
+just r1     # Run part 1 with real input
+just t2     # Test part 2 with example input
+just r2     # Run part 2 with real input
 ```
+
+Or run directly:
+```bash
+uv run d1/p1.py < d1/r.in
+uv run d2/p2.py < d2/r.in
+```
+
+### Submit a solution
+
+Submit your answers to adventofcode.com:
+```bash
+just submit <part> <day>
+```
+
+For example:
+```bash
+just submit 1 7   # Submit day 7 part 1
+just submit 2 7   # Submit day 7 part 2
+```
+
+**Requirements:**
+- `AOC_SESSION` environment variable must be set with your session token
+- Your solution must output the answer in one of these formats:
+  - `result: <answer>`
+  - `ans: <answer>`
+  - Or the script will use the largest number found in the output
 
 ## Project Structure
 
@@ -78,7 +107,8 @@ aoc2022/
 ├── d2/ - d6/          # Additional days
 ├── utils/             # Utility functions
 │   ├── __init__.py
-│   └── make_day.py   # Script to scaffold new days
+│   ├── make_day.py   # Script to scaffold new days
+│   └── submit.py     # Script to submit solutions to AoC
 ├── justfile           # Task automation
 ├── pyproject.toml     # Project configuration
 ├── .envrc             # Environment variables (direnv)
