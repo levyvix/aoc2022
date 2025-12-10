@@ -8,5 +8,11 @@ md day=DAY:
 desc day=DAY:
   uv run --with requests utils/fetch_desc.py {{day}} d{{day}}
 
+test day=DAY part="1":
+  uv run d{{day}}/p{{part}}.py < d{{day}}/t.in
+
+run day=DAY part="1":
+  uv run d{{day}}/p{{part}}.py < d{{day}}/r.in
+
 submit part day=DAY:
   uv run --with requests utils/submit.py {{day}} {{part}}

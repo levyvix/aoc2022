@@ -9,13 +9,13 @@ just md 9
 # Fetch problem descriptions
 just desc 9
 
-# Test solutions
-cd d9 && just t1    # Test part 1
-cd d9 && just t2    # Test part 2
+# Test solutions (from project root)
+just test 9 1       # Test day 9 part 1
+just test 9 2       # Test day 9 part 2
 
-# Run with real input
-cd d9 && just r1    # Run part 1
-cd d9 && just r2    # Run part 2
+# Run with real input (from project root)
+just run 9 1        # Run day 9 part 1
+just run 9 2        # Run day 9 part 2
 
 # Submit answers
 just submit 1 9     # Submit day 9 part 1
@@ -106,38 +106,22 @@ if __name__ == "__main__":
 
 ### 4. Testing Solutions
 
-**Test with example input:**
+**Test with example input from the project root:**
 
-From the day directory:
 ```bash
-cd d9
-just t1     # Test part 1
-just t2     # Test part 2
-```
-
-From the project root:
-```bash
-uv run d9/p1.py < d9/t.in
-uv run d9/p2.py < d9/t.in
+just test 9 1       # Test part 1
+just test 9 2       # Test part 2
 ```
 
 The test input is small and should run instantly. Compare output to expected result in the problem description.
 
 ### 5. Running with Real Input
 
-**Run with the actual puzzle input:**
+**Run with the actual puzzle input from the project root:**
 
-From the day directory:
 ```bash
-cd d9
-just r1     # Run part 1
-just r2     # Run part 2
-```
-
-From the project root:
-```bash
-uv run d9/p1.py < d9/r.in
-uv run d9/p2.py < d9/r.in
+just run 9 1        # Run part 1
+just run 9 2        # Run part 2
 ```
 
 ### 6. Submitting Solutions
@@ -168,12 +152,12 @@ The submit script will:
 1. **Create day:** `just md 9`
 2. **Fetch descriptions:** `just desc 9` (after part 1 accepted)
 3. **Edit solutions:** Update `d9/p1.py` and `d9/p2.py`
-4. **Test part 1:** `cd d9 && just t1`
-5. **Run part 1:** `cd d9 && just r1`
+4. **Test part 1:** `just test 9 1`
+5. **Run part 1:** `just run 9 1`
 6. **Submit part 1:** `just submit 1 9`
 7. **Fetch part 2 description:** `just desc 9`
-8. **Test part 2:** `cd d9 && just t2`
-9. **Run part 2:** `cd d9 && just r2`
+8. **Test part 2:** `just test 9 2`
+9. **Run part 2:** `just run 9 2`
 10. **Submit part 2:** `just submit 2 9`
 
 ## Important Notes
@@ -192,9 +176,6 @@ The icecream output goes to stderr and won't interfere with the submitted answer
 
 ### Common Issues
 
-**Problem:** `just t1` says "Justfile does not contain recipe `t1`"
-- **Solution:** You must be in the `d9/` directory. Run: `cd d9 && just t1`
-
 **Problem:** Solution runs but submit says format is wrong
 - **Solution:** Make sure the numeric answer is the last output line. Use icecream for debug output.
 
@@ -211,3 +192,48 @@ The icecream output goes to stderr and won't interfere with the submitted answer
 ```python
 url = f"https://adventofcode.com/2022/day/{day}"
 ```
+
+## Day 10 - OCR Challenge Notes
+
+**Part 1**: Solved successfully (13760)
+
+**Part 2**: Identifies 8 capital letters from CRT pixel display
+
+**Approach**:
+- Grid is 40x6 pixels, each letter is 4-5 characters wide
+- Tried spacing: 5-char intervals at positions 0, 5, 10, 15, 20, 25, 30, 35
+- Confident letter identifications: E (pos 0), F (pos 5), Z (pos 15), C (pos 20)
+- Uncertain positions: 10, 25, 30, 35 require careful pattern matching
+
+**Attempted answers**:
+- EFPZCRHK, EFPZCRHH, EPHZSCRC, EFPZCRHF, EFRZCRHF all incorrect
+
+**Workaround**: Modified `/utils/submit.py` to accept text answers from part 2 visual puzzles. The submit script now:
+1. Tries to extract numeric answers first (for part 1)
+2. Falls back to extracting capital letter sequences for part 2 (for OCR)
+3. Handles text answer submissions to AoC
+
+**Final solution approach**:
+- Use template matching with known ASCII art letter patterns
+- Reference actual pixel patterns from working test cases
+- Build a robust OCR recognition system based on pixel fill percentages and structural features
+
+---
+
+## Workflow Improvements
+
+### Root-Level Test and Run Commands (2025-12-10)
+
+**Problem**: Previously required constantly switching directories to run test/run commands from day directories, while submit commands required going back to the root.
+
+**Solution**: Added `test` and `run` recipes to the root justfile that accept `day` and optional `part` parameters:
+
+```bash
+# All commands now work from the project root
+just test 11 1       # Test day 11 part 1
+just test 11 2       # Test day 11 part 2
+just run 11 1        # Run day 11 part 1
+just run 11 2        # Run day 11 part 2
+```
+
+This eliminates the need for `cd d<day> && just t<part>` patterns and keeps the workflow consistent across all operations.
