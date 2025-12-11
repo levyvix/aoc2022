@@ -239,3 +239,76 @@ just run 11 2        # Run day 11 part 2
 ```
 
 This eliminates the need for `cd d<day> && just t<part>` patterns and keeps the workflow consistent across all operations.
+
+## Submit Script Enhancement
+
+**Modified `utils/submit.py`** to accept optional answer argument (2025-12-10):
+```bash
+# Auto-run solution and submit
+uv run --with requests utils/submit.py 19 1
+
+# Submit with explicit answer (faster for long-running solutions)
+uv run --with requests utils/submit.py 19 1 1725
+```
+
+This allows submitting answers without re-running potentially long simulations.
+
+## Day 19 - Blueprint Mining Challenge
+
+**Part 1**: ✅ Solved successfully (**1725**)
+
+**Part 2**: ✅ Optimized (2025-12-11)
+
+**Problem Summary**:
+- Part 1: Find max geodes from all 30 blueprints in 24 minutes, multiply by blueprint ID, sum all
+- Part 2: Find max geodes from first 3 blueprints in 32 minutes, multiply together
+
+**Key Issues Resolved**:
+1. **Input format difference** between test and real inputs:
+   - Test input: Multi-line format (each robot type on separate line)
+   - Real input: Single-line format (all costs on one line per blueprint)
+   - Solution: Regex substitution to normalize before parsing
+
+**Initial Algorithm (BFS)**:
+- BFS with state tracking: (minute, ore, clay, obsidian, robots of each type, geodes)
+- Basic pruning with theoretical max calculation
+- Performance: Part 2 took 45+ minutes per blueprint
+
+**Optimized Algorithm (DFS + Memoization)** - 2025-12-11:
+Implemented key optimizations from community solutions:
+
+1. **Memoization**: Cache results by state `(minutes_left, ore, clay, obsidian, ore_robots, clay_robots, obsidian_robots, geode_robots)`
+2. **Greedy Geode Strategy**: Build geode robot exclusively when possible (no exploring other options)
+3. **Strategic Robot Building**: Only build robots when needed (honor robot caps)
+4. **Early Termination Heuristics**:
+   - If 1 minute left, just collect resources
+   - If 0 minutes left, return current geodes
+5. **Upper Bound Pruning**: Skip states where `geodes + geode_robots*time + sum(1..time-1) <= best_found`
+6. **Resource Caps**: Don't build robots beyond maximum consumption
+   - Ore robots: cap at max ore needed per minute
+   - Clay robots: cap at max clay needed per minute
+   - Obsidian robots: cap at obsidian needed for geode robots
+
+**Performance Improvements** (2025-12-11 - Verified):
+- Part 1: ~10 seconds (no change, already fast)
+- Part 2: **45+ minutes → ~14 seconds** ✅ (95% reduction!)
+  - Blueprint 1: 10 geodes
+  - Blueprint 2: 33 geodes
+  - Blueprint 3: 47 geodes
+  - Final answer: 10 × 33 × 47 = **15510**
+
+**References**:
+- [Advent of Code 2022 Day 19 Solutions](https://michalmlozniak.com/notes/advent-of-code-2022-day-19-not-enough-minerals.html)
+- [Chasing Dings! Day 19 Writeup](https://chasingdings.com/2022/12/20/advent-of-code-day-19-not-enough-minerals/)
+
+## Debugging Tips
+
+### When Stuck on Performance or Complex Puzzles
+
+Search for the solution megathread on Reddit:
+- Go to `/r/adventofcode`
+- Look for the day's megathread (e.g., "[2022 Day 19] Solutions Megathread")
+- Review approach discussions and hints without spoiling the full solution
+- This helps understand the intended algorithm or optimization strategy
+
+Many AoC problems have optimization tricks or specific algorithmic patterns that aren't obvious. The megathread provides insight into what others are using (e.g., graph algorithms, dynamic programming patterns, clever pruning strategies) without giving away the full implementation.

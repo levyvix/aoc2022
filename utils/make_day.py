@@ -12,10 +12,31 @@ def main():
         day_number = args[0]
 
     file_content = """from icecream import ic
-from pathlib import Path
+import sys
+from collections import deque
 
-file_name = "t.in"
-content = (Path(__file__).parent / file_name).read_text()
+ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
+
+
+def solve(input_data):
+    \"\"\"Parse input and solve the puzzle.\"\"\"
+    lines = input_data.strip().split('\\n')
+
+    # Your solution logic here
+    result = 0
+
+    return result
+
+
+def main():
+    \"\"\"Read from stdin and print result.\"\"\"
+    content = open(0).read().strip()
+    result = solve(content)
+    print(result)
+
+
+if __name__ == "__main__":
+    main()
 """
 
     folder_path = Path(__file__).parent.parent / f"d{day_number}"
