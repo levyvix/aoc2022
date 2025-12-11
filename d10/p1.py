@@ -1,12 +1,6 @@
-from icecream import ic
-import sys
-
-ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
-
-
 def solve(input_data):
     """Parse input and solve the puzzle."""
-    lines = input_data.strip().split('\n')
+    lines = input_data.strip().split("\n")
 
     x = 1
     cycle = 0
@@ -14,7 +8,7 @@ def solve(input_data):
     target_cycles = {20, 60, 100, 140, 180, 220}
 
     for line in lines:
-        if line == 'noop':
+        if line == "noop":
             cycle += 1
             if cycle in target_cycles:
                 signal_strengths.append(cycle * x)
@@ -39,7 +33,7 @@ def main():
     """Read from stdin and print result."""
     content = open(0).read().strip()
     result = solve(content)
-    ic(result)
+    print(result)
 
 
 if __name__ == "__main__":

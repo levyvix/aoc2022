@@ -1,6 +1,7 @@
 from icecream import ic
 import sys
 import json
+from functools import cmp_to_key
 
 ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
 
@@ -48,22 +49,25 @@ def solve(input_data):
     """Parse input and solve the puzzle."""
     lines = input_data.strip().split('\n')
 
-    pairs = []
-    i = 0
-    while i < len(lines):
-        if i + 1 < len(lines):
-            left = json.loads(lines[i])
-            right = json.loads(lines[i + 1])
-            pairs.append((left, right))
-            i += 3  # Skip blank line
-        else:
-            break
+    packets = []
+    for line in lines:
+        if line:  # Skip blank lines
+            packets.append(json.loads(line))
 
-    result = 0
-    for idx, (left, right) in enumerate(pairs, 1):
-        if compare(left, right) == -1:
-            result += idx
+    # Add divider packets
+    divider1 = [[2]]
+    divider2 = [[6]]
+    packets.append(divider1)
+    packets.append(divider2)
 
+    # Sort packets
+    packets.sort(key=cmp_to_key(compare))
+
+    # Find indices of divider packets (1-indexed)
+    idx1 = packets.index(divider1) + 1
+    idx2 = packets.index(divider2) + 1
+
+    result = idx1 * idx2
     return result
 
 

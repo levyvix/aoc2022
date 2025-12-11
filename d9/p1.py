@@ -1,11 +1,5 @@
-from icecream import ic
-import sys
-
-ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
-
-
 def solve(input_data):
-    lines = input_data.strip().split('\n')
+    lines = input_data.strip().split("\n")
 
     # Parse commands
     commands = []
@@ -15,12 +9,7 @@ def solve(input_data):
         commands.append((direction, steps))
 
     # Direction vectors
-    directions = {
-        'R': (1, 0),
-        'L': (-1, 0),
-        'U': (0, 1),
-        'D': (0, -1)
-    }
+    directions = {"R": (1, 0), "L": (-1, 0), "U": (0, 1), "D": (0, -1)}
 
     # Initial positions (x, y)
     head = (0, 0)
@@ -52,7 +41,7 @@ def solve(input_data):
 def main():
     content = open(0).read().strip()
     result = solve(content)
-    ic(result)
+    print(result)
 
 
 if __name__ == "__main__":

@@ -1,11 +1,5 @@
-from icecream import ic
-import sys
-
-ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
-
-
 def solve(input_data):
-    lines = input_data.strip().split('\n')
+    lines = input_data.strip().split("\n")
 
     # Parse commands
     commands = []
@@ -15,12 +9,7 @@ def solve(input_data):
         commands.append((direction, steps))
 
     # Direction vectors
-    directions = {
-        'R': (1, 0),
-        'L': (-1, 0),
-        'U': (0, 1),
-        'D': (0, -1)
-    }
+    directions = {"R": (1, 0), "L": (-1, 0), "U": (0, 1), "D": (0, -1)}
 
     # Initialize 10 knots, all at origin
     knots = [(0, 0) for _ in range(10)]
@@ -41,8 +30,20 @@ def solve(input_data):
 
                 # If not touching, move follower one step closer to leader
                 if dist_x > 1 or dist_y > 1:
-                    new_x = follower_x + (1 if leader_x > follower_x else -1 if leader_x < follower_x else 0)
-                    new_y = follower_y + (1 if leader_y > follower_y else -1 if leader_y < follower_y else 0)
+                    new_x = follower_x + (
+                        1
+                        if leader_x > follower_x
+                        else -1
+                        if leader_x < follower_x
+                        else 0
+                    )
+                    new_y = follower_y + (
+                        1
+                        if leader_y > follower_y
+                        else -1
+                        if leader_y < follower_y
+                        else 0
+                    )
                     knots[i] = (new_x, new_y)
 
             # Track knot 9 positions
@@ -54,7 +55,7 @@ def solve(input_data):
 def main():
     content = open(0).read().strip()
     result = solve(content)
-    ic(result)
+    print(result)
 
 
 if __name__ == "__main__":

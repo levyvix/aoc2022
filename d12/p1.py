@@ -1,13 +1,9 @@
-from icecream import ic
-import sys
 from collections import deque
-
-ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
 
 
 def solve(input_data):
     """Parse input and solve the puzzle."""
-    lines = input_data.strip().split('\n')
+    lines = input_data.strip().split("\n")
 
     grid = [list(line) for line in lines]
     rows = len(grid)
@@ -18,12 +14,12 @@ def solve(input_data):
     end = None
     for r in range(rows):
         for c in range(cols):
-            if grid[r][c] == 'S':
+            if grid[r][c] == "S":
                 start = (r, c)
-                grid[r][c] = 'a'  # Treat S as 'a'
-            elif grid[r][c] == 'E':
+                grid[r][c] = "a"  # Treat S as 'a'
+            elif grid[r][c] == "E":
                 end = (r, c)
-                grid[r][c] = 'z'  # Treat E as 'z'
+                grid[r][c] = "z"  # Treat E as 'z'
 
     # BFS to find shortest path
     queue = deque([(start, 0)])  # (position, distance)
