@@ -11,7 +11,6 @@ def main():
 
     dirs = [(-1, 0), (0, 1), (0, -1), (1, 0)]
     visible = 0
-    seen = set()
     for r, rows in enumerate(grid[1:-1], 1):
         for c, char in enumerate(rows[1:-1], 1):
             current_tree = grid[r][c]

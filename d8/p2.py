@@ -8,11 +8,8 @@ ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
 def main():
     content = open(0).read()
     grid = content.splitlines()
-    edge = len(grid) * 2 + len(grid[0]) * 2 - 4
 
     dirs = [(-1, 0), (0, 1), (0, -1), (1, 0)]
-    visible = 0
-    seen = set()
     max_trees = -1
     for r, rows in enumerate(grid[1:-1], 1):
         for c, char in enumerate(rows[1:-1], 1):
