@@ -24,8 +24,13 @@ if not answer:
 
     try:
         with open(input_file, "r") as f:
+            # Day 22 part 2 requires numpy
+            cmd = ["uv", "run", script]
+            if day == 22 and part == 2:
+                cmd = ["uv", "run", "--with", "numpy", script]
+
             result = subprocess.run(
-                ["uv", "run", script],
+                cmd,
                 stdin=f,
                 capture_output=True,
                 text=True,
