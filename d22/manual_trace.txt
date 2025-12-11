@@ -1,0 +1,70 @@
+Path: 10R5L5R10L4R5L5
+
+Grid (0-indexed):
+     01234567890123456
+  0      ...#
+  1      .#..
+  2      #...
+  3      ....
+  4  ...#.......#
+  5  ........#...
+  6  ..#....#....
+  7  ..........#.
+  8      ...#....
+  9      .....#..
+ 10      .#......
+ 11      ......#.
+
+Face layout (4x4):
+F1: rows 0-3, cols 8-11
+F2: rows 4-7, cols 0-3
+F3: rows 4-7, cols 4-7
+F4: rows 4-7, cols 8-11
+F5: rows 8-11, cols 8-11
+F6: rows 8-11, cols 12-15
+
+Start: row 0, col 8, facing RIGHT (0)
+
+Step 1: Move 10 RIGHT
+  (0,8) R -> (0,9) R '.'
+  (0,9) R -> (0,10) R '.'
+  (0,10) R -> (0,11) R '.' (edge of F1)
+  (0,11) R -> WRAP to F6 top edge
+    F1 facing RIGHT at (0,11) local (0,3)
+    -> F6 top edge (reversed): row 8, col 15-(0) = 15
+    New: (8,15) facing DOWN
+  (8,15) D is '#' - STOP
+  Final after step 1: (0,11), facing 0
+
+Step 2: Turn R -> facing 1 (DOWN)
+
+Step 3: Move 5 DOWN
+  (0,11) D -> (1,11) D '.'
+  (1,11) D -> (2,11) D '.'
+  (2,11) D -> (3,11) D '.'
+  (3,11) D -> (4,11) D (natural F1->F4)
+  (4,11) D is '#' - STOP
+  Final: (3,11), facing 1
+
+Step 4: Turn L -> facing 0 (RIGHT)
+
+Step 5: Move 5 RIGHT
+  (3,11) R -> WRAP (edge of F1)
+    F1 facing RIGHT at (3,11) local (3,3)
+    -> F6 top edge (reversed): row 8, col 15-3 = 12
+    New: (8,12) facing DOWN
+  (8,12) D is '.' - Move
+  Now at (8,12) facing 1 (DOWN)
+  
+  (8,12) D -> (9,12) D '.'
+  (9,12) D -> (10,12) D '.'
+  (10,12) D -> (11,12) D '.'
+  (11,12) D -> WRAP (edge of F6)
+    F6 facing DOWN at (11,12) local (3,0)
+    -> F2 left edge (reversed): row 7-(3) = 4, col 0
+    New: (4,0) facing RIGHT
+  (4,0) R is '.' - Move
+  Now at (4,0) facing 0 (RIGHT)
+  Final: (4,0), facing 0
+
+This doesn't match the path... let me re-check my transitions.

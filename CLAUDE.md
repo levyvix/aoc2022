@@ -312,3 +312,58 @@ Search for the solution megathread on Reddit:
 - This helps understand the intended algorithm or optimization strategy
 
 Many AoC problems have optimization tricks or specific algorithmic patterns that aren't obvious. The megathread provides insight into what others are using (e.g., graph algorithms, dynamic programming patterns, clever pruning strategies) without giving away the full implementation.
+
+## Day 22 - Cube Navigation (2025-12-11)
+
+**Part 1**: ✅ Solved (hardcoded wrapping rules for flat map)
+
+**Part 2**: ✅ Solved using 3D cube simulation (**123149**)
+
+**Problem Summary**:
+- Unfold a 2D map into a 3D cube with 6 faces
+- Navigate around the cube following movement instructions
+- Handle face transitions with proper 3D orientation tracking
+
+**Algorithm - 3D Cube Model**:
+The solution uses a mathematical 3D cube model with rotation matrices instead of hardcoding edge transitions:
+
+1. **Cube Initialization**:
+   - Parse terrain and determine scale (face size: 50×50 for real input, 4×4 for test)
+   - Use BFS to explore all 6 faces starting from the first tile
+   - Track corner positions of each face using 3D vectors (each corner: ±1 in each dimension)
+
+2. **3D Rotation Matrices**:
+   - `ROTX`: Rotation around X-axis (rotates Y and Z)
+   - `ROTY`: Rotation around Y-axis (rotates X and Z)
+   - As you move between faces, the cube rotates to track orientation
+
+3. **Navigation**:
+   - Always track which face is "front-facing" (Z = -1)
+   - Movement stays within current face until boundary
+   - At boundary: rotate cube, apply modulo wrapping, get new face data
+   - Check for walls on the new face
+
+4. **Coordinate Mapping**:
+   - `restore_state()` converts local face coordinates to global map coordinates
+   - Handles rotations of the visible face (0/90/180/270 degrees)
+   - Updates direction based on cube rotation
+
+**Key Advantages Over Hardcoding**:
+- Works for any input layout (test 4×4, real 50×50)
+- No manual edge-case logic needed
+- Mathematically sound 3D transformation
+- Generalizable to other cube navigation problems
+
+**Test Results**:
+- Test input: Expected 5031 ✅
+- Real input: **123149** ✅
+
+**Dependencies**:
+```bash
+uv run --with numpy p2.py < input.txt
+```
+
+**References**:
+- Uses 3D rotation matrices to track cube state
+- BFS face traversal for automatic layout detection
+- Similar approaches used in many AoC 2022 community solutions

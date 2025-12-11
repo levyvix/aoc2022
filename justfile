@@ -9,10 +9,10 @@ desc day=DAY:
   uv run --with requests utils/fetch_desc.py {{day}} d{{day}}
 
 test day=DAY part="1":
-  uv run d{{day}}/p{{part}}.py < d{{day}}/t.in
+  @if [ {{day}} -eq 22 ] && [ {{part}} -eq 2 ]; then uv run --with numpy d{{day}}/p{{part}}.py < d{{day}}/t.in; else uv run d{{day}}/p{{part}}.py < d{{day}}/t.in; fi
 
 run day=DAY part="1":
-  uv run d{{day}}/p{{part}}.py < d{{day}}/r.in
+  @if [ {{day}} -eq 22 ] && [ {{part}} -eq 2 ]; then uv run --with numpy d{{day}}/p{{part}}.py < d{{day}}/r.in; else uv run d{{day}}/p{{part}}.py < d{{day}}/r.in; fi
 
 submit part day=DAY:
   uv run --with requests utils/submit.py {{day}} {{part}}

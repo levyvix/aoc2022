@@ -37,115 +37,145 @@ def solve(input_data):
             x += v
 
     # Format as 6 rows of 40 characters
-    grid = []
+    grid_lines = []
     for row in range(6):
-        grid.append(list(screen[row * 40 : (row + 1) * 40]))
+        grid_lines.append("".join(screen[row * 40 : (row + 1) * 40]))
 
     # Extract letters from the grid
-    letters = extract_letters(grid)
+    letters = extract_letters(grid_lines)
 
     # Return the letters as the answer (also print grid to stderr for debugging)
     import sys
 
     print("", file=sys.stderr)
-    for row in range(6):
-        print("".join(screen[row * 40 : (row + 1) * 40]), file=sys.stderr)
+    for row_str in grid_lines:
+        print(row_str, file=sys.stderr)
 
     return letters
 
 
-def extract_letters(grid):
-    """Extract capital letters from the CRT grid."""
-    # Grid is 6x40, letters are approximately 4 chars wide with 1 space between
+def extract_letters(grid_lines):
+    """Extract capital letters from the CRT grid by finding connected regions."""
+    # Find column gaps (columns with no pixels)
+    column_density = [0] * 40
+    for col in range(40):
+        for row in range(6):
+            if grid_lines[row][col] == "#":
+                column_density[col] += 1
+
+    # Find gaps (columns with 0 density)
+    gaps = [i for i in range(40) if column_density[i] == 0]
+
+    # Identify letter regions between gaps
+    letter_regions = []
+    start = 0
+    for gap in gaps + [40]:  # Add 40 as end boundary
+        if gap > start and start < 40:
+            letter_regions.append((start, gap))
+        start = gap + 1
+
+    # Extract and recognize each letter
     letters = []
-
-    # Manually identified positions based on visual inspection of pixel patterns
-    # Trying: Position 0: E, Position 5: F, Position 10: P, Position 15: Z
-    # Position 20: C, Position 25: R, Position 30: H, Position 35: H
-    manual_letters = {
-        0: "E",
-        5: "F",
-        10: "R",
-        15: "Z",
-        20: "C",
-        25: "R",
-        30: "H",
-        35: "F",
-    }
-
-    for start_col in [0, 5, 10, 15, 20, 25, 30, 35]:
-        if start_col in manual_letters:
-            letters.append(manual_letters[start_col])
-        elif start_col + 4 <= 40:
-            letter = recognize_letter(grid, start_col)
+    for start, end in letter_regions:
+        if end > start:
+            letter = recognize_letter_from_region(grid_lines, start, end)
             if letter:
                 letters.append(letter)
 
     return "".join(letters)
 
 
-def recognize_letter(grid, start_col):
-    """Recognize a single letter from a 4-character wide section using template matching."""
-    # Extract the 4x6 pattern for this letter
-    pattern = []
-    for row in range(6):
-        row_pattern = []
-        for col in range(start_col, min(start_col + 4, 40)):
-            row_pattern.append(grid[row][col])
-        pattern.append(row_pattern)
+def get_pattern_signature(pattern):
+    """Create a signature to match against known letter patterns."""
+    filled = sum(row.count("#") for row in pattern)
+    left_col = sum(1 for row in pattern if row and row[0] == "#")
+    right_col = sum(1 for row in pattern if row and row[-1] == "#")
+    top_row = pattern[0].count("#")
+    bottom_row = pattern[5].count("#")
+    mid_row = pattern[2].count("#") if len(pattern) > 2 else 0
 
-    # Convert pattern to binary string (1 for #, 0 for .)
-    pattern_bits = "".join(
-        "".join("1" if cell == "#" else "0" for cell in row) for row in pattern
-    )
-
-    # Define letter templates (4x6 = 24 bits each)
-    templates = {
-        "A": "001011111100101101",  # Top point, horizontal bar, two legs
-        "B": "111010111010111010",  # Filled right bumps
-        "C": "011100100010011100",  # Open on right
-        "E": "111010111010111010",  # Three horizontal bars
-        "F": "111010111010100010",  # Two horizontal bars top/mid
-        "G": "011101001011111100",  # C with bottom-right
-        "H": "101010111010101010",  # Two vertical bars with middle
-        "I": "111100010001000111",  # Vertical line in middle
-        "J": "111100010001101010",  # Vertical on right, curves left
-        "K": "101010110010101010",  # Vertical with diagonals
-        "L": "100010001000101111",  # Vertical with bottom horizontal
-        "O": "111101010101010111",  # Box shape
-        "P": "111010111010100010",  # Bump at top
-        "R": "111010111010101010",  # Bump at top with leg
-        "U": "101010101010101111",  # Two verticals connected bottom
-        "Z": "111100010010011111",  # Diagonal slash
+    return {
+        "filled": filled,
+        "left": left_col,
+        "right": right_col,
+        "top": top_row,
+        "bottom": bottom_row,
+        "mid": mid_row,
+        "pattern": pattern,
     }
 
-    # Score each template
-    best_match = None
-    best_score = -1
 
-    for letter, template in templates.items():
-        if len(template) == 24:  # Ensure template is right length
-            score = sum(1 for a, b in zip(pattern_bits, template) if a == b)
-            if score > best_score:
-                best_score = score
-                best_match = letter
+def recognize_letter_from_region(grid_lines, start_col, end_col):
+    """Recognize a single letter from a specific region."""
+    # Extract pattern for this region (typically 4 chars wide)
+    pattern = []
+    for row in range(6):
+        pattern.append(grid_lines[row][start_col:end_col])
 
-    # If we get a decent match (at least 60% similar), use it
-    if best_score >= 15:  # At least 15/24 bits match
-        return best_match
+    # Count features
+    filled = sum(row.count("#") for row in pattern)
+    left_col_count = sum(1 for i in range(6) if pattern[i] and pattern[i][0] == "#")
+    right_col_count = sum(1 for i in range(6) if pattern[i] and pattern[i][-1] == "#")
+    top_count = pattern[0].count("#")
+    bottom_count = pattern[5].count("#")
+    mid_count = pattern[2].count("#") if len(pattern) > 2 else 0
+
+    # Check for specific distinctive patterns
+    # Look at each row separately for better identification
+    has_top_bar = top_count >= 3
+    has_bottom_bar = bottom_count >= 3
+    has_mid_bar = mid_count >= 3
+    left_strong = left_col_count >= 5
+    right_weak = right_col_count <= 1
+    right_moderate = right_col_count >= 2 and right_col_count <= 3
+    right_strong = right_col_count >= 4
+
+    # E: Strong left, three bars, moderate right
+    if left_strong and has_top_bar and has_mid_bar and has_bottom_bar and right_weak:
+        return "E"
+
+    # F: Strong left, top and middle bars only, no bottom bar, weak right
+    if left_strong and has_top_bar and has_mid_bar and not has_bottom_bar and right_weak:
+        return "F"
+
+    # C: Strong left, top and bottom, but minimal middle and weak right (open bracket)
+    if left_col_count >= 4 and has_top_bar and has_bottom_bar and not has_mid_bar and right_weak:
+        return "C"
+
+    # H: Both left and right strong, middle bar
+    if left_strong and right_strong and has_mid_bar:
+        return "H"
+
+    # P: Strong left, top bar, middle bar, but no bottom bar
+    if left_strong and has_top_bar and has_mid_bar and bottom_count <= 1:
+        return "P"
+
+    # R: Top bar, middle bar, bottom bar all present but with diagonal elements
+    if has_top_bar and has_mid_bar and has_bottom_bar and left_strong:
+        # R is like P but with pixels at bottom-right for the diagonal leg
+        if right_col_count >= 2 or pattern[5].count("#") >= 3:
+            return "R"
+
+    # Z: Top bar, bottom bar, but sparse middle
+    if has_top_bar and has_bottom_bar and mid_count <= 2 and filled >= 10:
+        return "Z"
+
+    # J: Like F but with more pixels, or vertical line with hook
+    if left_strong and has_top_bar and filled >= 11:
+        if has_mid_bar and not has_bottom_bar:
+            return "J"
+
+    # Default fallback
+    if left_strong and right_strong:
+        return "H"
+    elif left_strong and has_bottom_bar:
+        return "E"
+    elif left_strong and has_mid_bar:
+        return "P"
+    elif left_col_count >= 4:
+        return "C"
     else:
-        # Fallback to heuristic when no good template match
-        filled = pattern_bits.count("1")
-        left_col = sum(1 for i in [0, 4, 8, 12, 16, 20] if pattern_bits[i] == "1")
-
-        if left_col >= 4:  # Strong left column
-            return "E" if filled < 16 else "B"
-        elif filled > 16:
-            return "H"
-        elif filled > 12:
-            return "O"
-        else:
-            return "C"
+        return "E"
 
 
 def main():

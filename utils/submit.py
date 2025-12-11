@@ -52,41 +52,52 @@ if not answer:
         ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
         clean_output = ansi_escape.sub("", output)
 
-        # Look for "result: <number>" or "ans: <number>" pattern
-        match = re.search(r"(?:result|ans):\s*(\d+)", clean_output)
+        # Look for "result: <number>" or "ans: <number>" pattern (handles both numbers and SNAFU)
+        match = re.search(r"(?:result|ans):\s*([\w\-=]+)", clean_output)
         if match:
             answer = match.group(1)
         else:
-            # If no pattern match, take the largest number in the output
-            numbers = re.findall(r"\d+", clean_output)
-            if numbers:
-                # Take the longest number (most digits = likely the answer)
-                answer = max(numbers, key=len)
-            else:
-                # For part 2 visual puzzles (like day 10), the answer is usually multi-line text
-                # Try to extract capital letters from the output
-                if part == 2:
-                    # Extract sequences of capital letters and common characters
-                    lines = clean_output.split("\n")
-                    # Join all capital letters and common word characters found in the output
-                    all_text = "".join(lines)
-                    # Look for capital letter sequences (the OCR answer)
-                    letter_match = re.search(r"[A-Z]{4,}", all_text)
-                    if letter_match:
-                        answer = letter_match.group(0)
-                    else:
-                        # If no capital letter sequence, use the full output for manual inspection
-                        print("Note: Could not auto-extract answer from output")
-                        print(f"Full output:\n{clean_output}")
-                        print(
-                            "\nPlease visually identify the 8 capital letters and submit manually"
-                        )
-                        sys.exit(1)
+            # If no pattern match, try to extract the answer
+            # First try to get SNAFU-like answers for day 25 (contains -, =, and digits)
+            if day == 25 and part == 1:
+                snafu_match = re.search(r"[\d\-=2]+", clean_output.strip())
+                if snafu_match:
+                    answer = snafu_match.group(0).strip()
                 else:
-                    # If still no match for part 1, print the raw output for debugging
-                    print("Error: Could not extract answer from output")
+                    print("Error: Could not extract SNAFU answer from output")
                     print(f"Clean output: {repr(clean_output)}")
                     sys.exit(1)
+            else:
+                # Fall back to taking the largest number in the output
+                numbers = re.findall(r"\d+", clean_output)
+                if numbers:
+                    # Take the longest number (most digits = likely the answer)
+                    answer = max(numbers, key=len)
+                else:
+                    # For part 2 visual puzzles (like day 10), the answer is usually multi-line text
+                    # Try to extract capital letters from the output
+                    if part == 2:
+                        # Extract sequences of capital letters and common characters
+                        lines = clean_output.split("\n")
+                        # Join all capital letters and common word characters found in the output
+                        all_text = "".join(lines)
+                        # Look for capital letter sequences (the OCR answer)
+                        letter_match = re.search(r"[A-Z]{4,}", all_text)
+                        if letter_match:
+                            answer = letter_match.group(0)
+                        else:
+                            # If no capital letter sequence, use the full output for manual inspection
+                            print("Note: Could not auto-extract answer from output")
+                            print(f"Full output:\n{clean_output}")
+                            print(
+                                "\nPlease visually identify the 8 capital letters and submit manually"
+                            )
+                            sys.exit(1)
+                    else:
+                        # If still no match for part 1, print the raw output for debugging
+                        print("Error: Could not extract answer from output")
+                        print(f"Clean output: {repr(clean_output)}")
+                        sys.exit(1)
     except FileNotFoundError as e:
         print(f"Error: {e}")
         sys.exit(1)

@@ -1,0 +1,11 @@
+t1:
+  uv run p1.py < t.in
+
+r1:
+  uv run p1.py < r.in
+
+t2:
+  uv run p2.py < t.in
+
+r2:
+  uv run p2.py < r.in
