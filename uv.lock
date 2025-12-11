@@ -24,13 +24,26 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "advent-of-code-data" },
+    { name = "aocd" },
     { name = "icecream" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "advent-of-code-data", specifier = ">=2.1.0" },
+    { name = "aocd", specifier = ">=0.1" },
     { name = "icecream", specifier = ">=2.1.8" },
+]
+
+[[package]]
+name = "aocd"
+version = "0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "advent-of-code-data" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fe/b3/8020f9e94251acd7017c3f02d214170ce1158b03e7a1442adba92af0ba42/aocd-0.1-py2.py3-none-any.whl", hash = "sha256:daf2f8f9b0d96dc7a569987c12889d482c4213cd336c79ebb9d9ea23803f8871", size = 1282, upload-time = "2020-12-05T11:45:34.712Z" },
 ]
 
 [[package]]
