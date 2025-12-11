@@ -4,12 +4,10 @@ import sys
 ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
 
 
-def main():
-    content = open(0).read()
+def solve(content):
     rounds = content.splitlines()
 
     points = {"draw": 3, "lose": 0, "win": 6}
-    points_move = {"X": 1, "Y": 2, "Z": 3}
     # X lose
     # Y draw
     # Z win
@@ -47,7 +45,13 @@ def main():
                 result = "win"
                 p += 1
         p += points[result]
-    ic(p)
+    return p
+
+
+def main():
+    content = open(0).read()
+    res = solve(content)
+    print(res)
 
 
 if __name__ == "__main__":

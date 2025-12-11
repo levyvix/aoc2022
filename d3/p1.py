@@ -1,11 +1,4 @@
-from icecream import ic
-import sys
-
-ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
-
-
-def main():
-    content = open(0).read()
+def solve(content):
     sacks = content.splitlines()
 
     total = 0
@@ -20,7 +13,13 @@ def main():
         elif common == common.upper():
             total += ord(common) - 38
 
-    ic(total)
+    return total
+
+
+def main():
+    content = open(0).read()
+    res = solve(content)
+    print(res)
 
 
 if __name__ == "__main__":

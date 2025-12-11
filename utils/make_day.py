@@ -11,13 +11,7 @@ def main():
     else:
         day_number = args[0]
 
-    file_content = """from icecream import ic
-import sys
-from collections import deque
-
-ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
-
-
+    file_content = """
 def solve(input_data):
     \"\"\"Parse input and solve the puzzle.\"\"\"
     lines = input_data.strip().split('\\n')
