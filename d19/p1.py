@@ -1,7 +1,6 @@
 import re
 
-
-def parse_blueprints(input_data):
+def parse_blueprints(input_data: str):
     """Parse blueprint definitions."""
     blueprints = []
     text = input_data.strip()
@@ -35,7 +34,7 @@ def parse_blueprints(input_data):
             )
 
             blueprints.append(
-                {
+{
                     "id": bp_id,
                     "ore": ore_robot,
                     "clay": clay_robot,
@@ -46,7 +45,7 @@ def parse_blueprints(input_data):
     return blueprints
 
 
-def max_geodes(blueprint, time_limit=24):
+def max_geodes(blueprint: dict, time_limit=24):
     """Find maximum geodes obtainable with a blueprint in given time."""
     from collections import deque
 
@@ -211,9 +210,9 @@ def max_geodes(blueprint, time_limit=24):
     return best[0]
 
 
-def solve(input_data):
+def solve(input_data: str) -> int:
     """Parse input and solve the puzzle."""
-    blueprints = parse_blueprints(input_data)
+    blueprints: list[dict] = parse_blueprints(input_data)
 
     quality_sum = 0
     for bp in blueprints:
