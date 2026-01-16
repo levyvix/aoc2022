@@ -1,10 +1,11 @@
-from icecream import ic
 import sys
+
+from icecream import ic
 
 ic.configureOutput(outputFunction=lambda s: print(s, file=sys.stderr))
 
 
-def solve(content) -> int:
+def solve(content: str) -> int:
     rounds = content.splitlines()
 
     points = {"draw": 3, "lose": 0, "win": 6}

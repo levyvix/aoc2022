@@ -1,5 +1,6 @@
 import re
 
+
 def parse_blueprints(input_data: str):
     """Parse blueprint definitions."""
     blueprints = []
@@ -18,23 +19,13 @@ def parse_blueprints(input_data: str):
 
             ore_robot = int(re.search(r"ore robot costs (\d+) ore", line).group(1))
             clay_robot = int(re.search(r"clay robot costs (\d+) ore", line).group(1))
-            obsidian_robot_ore = int(
-                re.search(r"obsidian robot costs (\d+) ore", line).group(1)
-            )
-            obsidian_robot_clay = int(
-                re.search(r"obsidian robot costs \d+ ore and (\d+) clay", line).group(1)
-            )
-            geode_robot_ore = int(
-                re.search(r"geode robot costs (\d+) ore", line).group(1)
-            )
-            geode_robot_obsidian = int(
-                re.search(r"geode robot costs \d+ ore and (\d+) obsidian", line).group(
-                    1
-                )
-            )
+            obsidian_robot_ore = int(re.search(r"obsidian robot costs (\d+) ore", line).group(1))
+            obsidian_robot_clay = int(re.search(r"obsidian robot costs \d+ ore and (\d+) clay", line).group(1))
+            geode_robot_ore = int(re.search(r"geode robot costs (\d+) ore", line).group(1))
+            geode_robot_obsidian = int(re.search(r"geode robot costs \d+ ore and (\d+) obsidian", line).group(1))
 
             blueprints.append(
-{
+                {
                     "id": bp_id,
                     "ore": ore_robot,
                     "clay": clay_robot,
@@ -83,9 +74,7 @@ def max_geodes(blueprint: dict, time_limit=24):
 
         # Prune states that can't possibly beat the best result
         # Even if we build geode robots every remaining turn
-        theoretical_max = (
-            geodes + geode_robots * remaining + (remaining * (remaining - 1)) // 2
-        )
+        theoretical_max = geodes + geode_robots * remaining + (remaining * (remaining - 1)) // 2
         if theoretical_max <= best[0]:
             continue
 
